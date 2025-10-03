@@ -1,0 +1,89 @@
+@font-face {
+    font-family: 'Coolvetica';
+    src: url('./Fonts/Coolvetica\ Rg.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Coolvetica Condensed';
+    src: url('./Fonts/Coolvetica\ Rg\ Cond.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: #ffffff;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    font-family: 'Coolvetica Condensed', sans-serif;
+    font-size: 'condensed';
+    font-size: 30rem;
+    margin-bottom: 5rem;
+}
+
+h3 {
+    font-family: 'Coolvetica', sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 3rem;
+}
+
+.btn {
+    width: 100px;
+    height: 40px;
+    border: 2px solid white;
+    border-radius: 1rem;
+    background-color: transparent;
+    outline: none;
+    margin: 0 15px;
+    font-size: 2rem;
+    font-family: 'Coolvetica', sans-serif;
+    font-style: normal;
+    cursor: pointer;
+}
+
+.btn:active {
+    background-color: #ffffff;
+    color: black;
+}
+
+@media (width <=600px) {
+    h1 {
+        font-size: 17rem;
+        margin-bottom: 2.5rem;
+    }
+
+    h3 {
+        font-size: 2.5rem;
+    }
+
+    .buttons {
+        display: flex;
+        flex-direction: column;
+        row-gap: 1.5rem;
+    }
+}
