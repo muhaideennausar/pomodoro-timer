@@ -10,11 +10,12 @@ const resetBtn = document.getElementById('reset-btn');
 
 // Timer state
 let currentSession = 'focus';
-let timeRemaining = 25 * 60; // in seconds
+let timeRemaining = .5 * 60; // in seconds
 let timerInterval = null;
 let isRunning = false;
 let currentCycle = 1;
 let focusCount = 0;
+let endAt = null; // Timestamp when current session should end
 
 // Session durations in seconds
 const SESSION_DURATIONS = {
@@ -22,6 +23,16 @@ const SESSION_DURATIONS = {
     break: 5 * 60,
     longbreak: 15 * 60
 };
+
+// Session display names
+const SESSION_NAMES = {
+    focus: 'Focus',
+    break: 'Break',
+    longbreak: 'Long Break'
+};
+
+// Store original title
+const originalTitle = document.title;
 
 // Audio
 const bellSound = new Audio('bell.mp3');
@@ -33,7 +44,7 @@ function init() {
     updateDisplay();
     updateCycleDisplay();
     setActiveButton(focusBtn);
-
+    
     // Event listeners
     focusBtn.addEventListener('click', () => selectSession('focus'));
     breakBtn.addEventListener('click', () => selectSession('break'));
@@ -41,15 +52,19 @@ function init() {
     startBtn.addEventListener('click', startTimer);
     pauseBtn.addEventListener('click', pauseTimer);
     resetBtn.addEventListener('click', resetTimer);
+    
+    // Update display when tab becomes visible
+    document.addEventListener('visibilitychange', () => {
+        if (isRunning) tick();
+    });
 }
 
 function selectSession(session) {
     if (isRunning) return; // Prevent changing session while timer is running
-
     currentSession = session;
     timeRemaining = SESSION_DURATIONS[session];
     updateDisplay();
-
+    
     // Update active button
     if (session === 'focus') {
         setActiveButton(focusBtn);
@@ -69,38 +84,81 @@ function setActiveButton(activeBtn) {
 
 function startTimer() {
     if (isRunning) return;
-
     isRunning = true;
-    timerInterval = setInterval(() => {
-        timeRemaining--;
-        updateDisplay();
+    
+    // Calculate end time based on current remaining time
+    endAt = Date.now() + timeRemaining * 1000;
+    
+    timerInterval = setInterval(tick, 250); // Check 4 times per second for smooth updates
+    tick(); // Immediate first update
+}
 
-        if (timeRemaining <= 0) {
-            clearInterval(timerInterval);
-            isRunning = false;
-            onSessionComplete();
-        }
-    }, 1000);
+function tick() {
+    if (!isRunning || endAt == null) return;
+    
+    // Calculate remaining time from wall clock
+    const remainingMs = Math.max(0, endAt - Date.now());
+    timeRemaining = Math.ceil(remainingMs / 1000);
+    
+    updateDisplay();
+    
+    // Check if session completed
+    if (remainingMs <= 0) {
+        clearInterval(timerInterval);
+        isRunning = false;
+        timerInterval = null;
+        endAt = null;
+        
+        // Restore original title
+        document.title = originalTitle;
+        
+        onSessionComplete();
+    }
 }
 
 function pauseTimer() {
     if (!isRunning) return;
-
+    
+    // Capture accurate remaining time before pausing
+    const remainingMs = Math.max(0, endAt - Date.now());
+    timeRemaining = Math.ceil(remainingMs / 1000);
+    
     clearInterval(timerInterval);
     isRunning = false;
+    timerInterval = null;
+    endAt = null;
+    
+    // Restore original title
+    document.title = originalTitle;
+    
+    updateDisplay();
 }
 
 function resetTimer() {
     clearInterval(timerInterval);
     isRunning = false;
+    timerInterval = null;
+    endAt = null;
     timeRemaining = SESSION_DURATIONS[currentSession];
+    
+    // Restore original title
+    document.title = originalTitle;
+    
     updateDisplay();
 }
 
 function updateDisplay() {
     const minutes = Math.floor(timeRemaining / 60);
     const seconds = timeRemaining % 60;
-    timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    
+    timerDisplay.textContent = formattedTime;
+    
+    // Update tab title only when running
+    if (isRunning) {
+        const sessionName = SESSION_NAMES[currentSession];
+        document.title = `${formattedTime} - ${sessionName}`;
+    }
 }
 
 function updateCycleDisplay() {
@@ -110,7 +168,7 @@ function updateCycleDisplay() {
 function onSessionComplete() {
     // Play bell sound
     bellSound.play();
-
+    
     // Wait for bell to finish (5 seconds) before transitioning
     setTimeout(() => {
         autoTransition();
@@ -120,7 +178,7 @@ function onSessionComplete() {
 function autoTransition() {
     if (currentSession === 'focus') {
         focusCount++;
-
+        
         // After 4 focus sessions, give long break
         if (focusCount === 4) {
             currentSession = 'longbreak';
@@ -130,12 +188,14 @@ function autoTransition() {
             currentSession = 'break';
             setActiveButton(breakBtn);
         }
+        
     } else if (currentSession === 'break') {
         // After break, go to focus and increment cycle
         currentSession = 'focus';
         setActiveButton(focusBtn);
         currentCycle++;
         updateCycleDisplay();
+        
     } else if (currentSession === 'longbreak') {
         // After long break, stop and reset cycle
         currentSession = 'focus';
@@ -147,7 +207,7 @@ function autoTransition() {
         updateDisplay();
         return; // Don't auto-start after long break
     }
-
+    
     // Set time for next session and auto-start
     timeRemaining = SESSION_DURATIONS[currentSession];
     updateDisplay();
