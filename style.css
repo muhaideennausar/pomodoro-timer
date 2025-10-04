@@ -1,13 +1,13 @@
 @font-face {
-    font-family: 'Coolvetica';
-    src: url('./Fonts/Coolvetica\ Rg.otf') format('opentype');
-    font-weight: normal;
+    font-family: 'Coolvetica Condensed';
+    src: url('./Fonts/Coolvetica\ Rg\ Cond.otf') format('opentype');
     font-style: normal;
+    font-weight: normal;
 }
 
 @font-face {
-    font-family: 'Coolvetica Condensed';
-    src: url('./Fonts/Coolvetica\ Rg\ Cond.otf') format('opentype');
+    font-family: 'Coolvetica Regular';
+    src: url('./Fonts/Coolvetica\ Rg.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
 }
@@ -16,74 +16,121 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    color: #ffffff;
 }
 
 html {
     font-size: 62.5%;
 }
 
-body {
+
+
+/* ======== MAIN APPLICATION =========== */
+/* ========= MOBILE FIRST APPROACH ======== */
+.container {
     width: 100%;
     min-height: 100vh;
-    background-color: #000000;
+    color: white;
+    background-color: black;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.container {
-    display: flex;
     flex-direction: column;
-    align-items: center;
 }
 
-h1 {
-    font-family: 'Coolvetica Condensed', sans-serif;
-    font-size: 'condensed';
-    font-size: 30rem;
-    margin-bottom: 5rem;
+button {
+    -webkit-tap-highlight-color: transparent;
 }
 
-h3 {
-    font-family: 'Coolvetica', sans-serif;
-    font-weight: normal;
-    font-style: normal;
-    font-size: 3rem;
+.session-buttons,
+.timer-buttons {
+    display: flex;
 }
 
 .btn {
-    width: 100px;
-    height: 40px;
-    border: 2px solid white;
-    border-radius: 1rem;
-    background-color: transparent;
-    outline: none;
-    margin: 0 15px;
-    font-size: 2rem;
-    font-family: 'Coolvetica', sans-serif;
-    font-style: normal;
+    width: 10rem;
+    height: 5rem;
+    background-color: #262626;
+    border: none;
+    color: white;
+    font-family: 'Coolvetica Regular';
+    font-size: 1.7rem;
     cursor: pointer;
+    /* transition: background-color .5s ease; */
 }
 
 .btn:active {
-    background-color: #ffffff;
     color: black;
+    background-color: white;
 }
 
-@media (width <=600px) {
-    h1 {
-        font-size: 17rem;
-        margin-bottom: 2.5rem;
+.timer-buttons>button {
+    height: 5rem;
+    font-size: 2rem;
+}
+
+.focus-btn,
+.start-btn {
+    border-top-left-radius: .7rem;
+    border-bottom-left-radius: .7rem;
+}
+
+.longbreak-btn,
+.reset-btn {
+    border-top-right-radius: .7rem;
+    border-bottom-right-radius: .7rem;
+}
+
+.button-border-right {
+    border-right: 1px solid white;
+}
+
+.button-border-left {
+    border-left: 1px solid white;
+}
+
+.timer-display {
+    font-family: 'Coolvetica Condensed', sans-serif;
+    font-size: 20rem;
+    margin: 5rem 0;
+}
+
+.session-cycle {
+    font-family: 'Coolvetica Regular';
+    font-size: 2rem;
+    margin-bottom: 3rem;
+}
+
+.active {
+    color: black;
+    background-color: white;
+}
+
+/* ========== DESKTOP STYLES ========== */
+
+@media (min-width: 1024px) {
+    .timer-display {
+        font-size: 30rem;
+        margin: 3rem 0;
     }
 
-    h3 {
-        font-size: 2.5rem;
+    .session-buttons>button {
+        width: 12.5rem;
+        height: 5rem;
+        font-size: 2rem;
     }
 
-    .buttons {
-        display: flex;
-        flex-direction: column;
-        row-gap: 1.5rem;
+    .timer-buttons>button {
+        height: 5rem;
+        width: 10rem;
+    }
+
+    .btn:hover {
+        color: white;
+        background-color: #404040;
+    }
+
+    .btn:active {
+        color: black;
+        background-color: white;
     }
 }
