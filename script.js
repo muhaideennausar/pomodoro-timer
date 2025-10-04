@@ -10,7 +10,7 @@ const resetBtn = document.getElementById('reset-btn');
 
 // Timer state
 let currentSession = 'focus';
-let timeRemaining = .5 * 60; // in seconds
+let timeRemaining = 25 * 60; // in seconds
 let timerInterval = null;
 let isRunning = false;
 let currentCycle = 1;
